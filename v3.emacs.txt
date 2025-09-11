@@ -1,0 +1,1588 @@
+Emacs (Edting Macros)
+=====================
+
+index
+    * Command line options
+        * No window system
+        * Read buffer from stdin
+    * Info
+        * Major mode
+        * Full path (include filename)
+        * Character code
+        * Count lines
+        * calendar
+    * File
+        * Home
+        * Change status
+        * Open path or URL under cursor
+        * Open URL under cursor
+        * Save/SaveAs
+        * M_x dired (File manager) - CTRL_x CTRL_d
+    * Move cursor position
+        * Goto line
+        * Move cursor position (not in anaconda-mode)
+        * Point register
+        * Paragraph (문장)
+        * Sentence (문단)
+        * ()
+    * Editing
+        * Coding Systems
+        * Remove whole line
+        * Undo
+        * overwrite-mode
+        * To replace a region with yank buffer contents
+        * New line
+        * Join lines
+        * Repeat
+            * To repeat N times
+            * Repeat previous command
+            * Macros
+            * Text register
+        * Reload file
+        * Read only
+        * Vertical region
+            * To yank/cut in vertical region
+            * M_x cua-mode or M_x cua-selection-mode
+        * Indent
+            * Indent
+            * Remove indent
+            * M_x back-to-indentation (현재 줄의 글자 시작점으로 이동)
+            * Block indent (in region, text-mode)
+        * center-region
+        * Jump to previous mark in current buffer
+        * Font
+            * To find out current font
+            * Font size
+            * Remove text properties(style)
+        * Cursor부터 word 끝까지 선택(특수문제 제외)
+        * Execute::replaces the region with the output
+        * Shell
+        * Completion
+        * Insert unicode (TeX)
+        * Sort - https://www.gnu.org/software/emacs/manual/html_node/emacs/Sorting.html
+        * Filter
+        * Timestamps
+    * Window manager
+        * M_x desktop-save-mode
+        * Buffer
+        * Window
+        * M_x tab-bar-mode
+    * Find and replace
+        * Incremental search
+            * Search forward
+            * Search backward
+            * Search word under cursor
+            * To find unicode char.
+            * RegEXP search
+        * Substitution
+            * M_x query-replace-regexp
+            * M_x query-replace
+            * Replace with a newline
+            * To replace ending with two spaces
+            * To replace link number
+            * Letter case
+    * Advanced
+        * Markdown
+        * Python
+            * Indent/unindent
+            * M_x python-mode
+            * M_x anaconda-mode
+            * M_x lsp-mode
+        * M_x highlight-indentation-mode
+        * M_x org-mode (table)
+        * LaTeX
+        * M_x graphviz-dot-mode (flowchart)
+        * emoji
+        * DocView
+        * M_x EWW
+    * Installation
+        * Anaconda mode
+        * Graphviz
+        * Indent highlighter
+        * Markdown
+        * Company mode
+        * xclip
+    * Configure
+        * Color scheme
+    * Wrap text
+    * Build
+
+
+
+* Command line options
+
+    * No window system
+
+        $ emacs --no-window-system
+        $ emacs -nw
+            screen과 key binding이 겹치는 부분이 있어
+            X window system에서만 사용
+
+    * Read buffer from stdin
+
+        $ emacs --insert <(echo 123)
+
+
+* Info
+
+    * Major mode
+
+        CTRL_h m
+        M_x describe-mode
+
+    * Full path (include filename)
+
+        M_SHIFT_: buffer-file-name
+
+    * Character code
+
+        CTRL_u CTRL_x =
+        CTRL_x =
+
+    * Count lines
+
+        M_=
+        M_x count-lines-region
+
+    * calendar
+
+        M_x calendar
+
+
+* File
+
+    * Home
+
+        Set HOME on MS-Windows
+            ;; NOT-WORKING
+            (setq default-directory "C:/Users/koowgnojeel/")
+
+        M_x getenv HOME
+
+        Sets a variable
+            M_x setenv HOME PATH_TO_HOME_DIR
+
+            ;; set default path for 'find-file'
+            (setq default-directory "C:/Users/koowgnojeel/")
+
+        Removes a variable
+            CTRL_u M_x setenv HOME
+
+    * Change status
+
+        * ibuffer
+          see - Meaning of symbol
+
+        * M_x diff-buffer-with-file
+
+    * Open path or URL under cursor
+
+        M_x find-file-at-point
+
+    * Open URL under cursor
+
+        M_x browse-url
+
+    * Save/SaveAs
+
+        * Save(Ask question)    
+
+            CTRL_x s
+
+        * Save
+
+            CTRL_x CTRL_s
+            
+        * SaveAs
+
+            CTRL_x CTRL_w
+
+    * M_x dired (File manager) - CTRL_x CTRL_d
+        Operating on Files (GNU Emacs Manual)
+        https://www.gnu.org/software/emacs/manual/html_node/emacs/Operating-on-Files.html
+
+        q            Close
+
+        g            Refresh listing (Update the entire contents of the Dired buffer)
+
+        ^            Go to parent dir
+        < or >       Focus previous/next directory
+
+        Open file
+            o            open and focus (in split window)
+            CTRL_o       open (in split window)
+            v or enter   open file
+
+        Mark
+            m       Mark a file (%m regex)
+            u       Unmark
+
+            u t     Mark all (t to toggle)
+            U       Unmark all
+        
+        Operating on Files
+            +       Create DIR.
+            C       Copy file
+            R       Move file
+            D       Delete file
+            
+            Z       gzip(gz) compress/decompress 
+            =       Compare the current file
+
+            Search and replace contents
+                A regexp RET
+                    Search all the specified contents for the regular expression regexp
+                    (dired-do-search).
+
+                    This command is a variant of tags-search.
+                    The search stops at the first match it finds;
+                    use M_, to resume
+
+                Q from RET to RET
+                    Perform query-replace-regexp
+                    같은 내용을 replace
+
+            Change the permission bits
+                M modespec RET
+
+            Links
+                H new RET ;; Make hard links
+                S new RET ;; Make symbolic links
+
+        Transforming File Names (GNU Emacs Manual) - 31.10 Transforming File Names in Dired
+        https://www.gnu.org/software/emacs/manual/html_node/emacs/Transforming-File-Names.html
+
+            For example,
+                % R ^.*$ RET x-\& RET 
+            renames each selected file 
+            by prepending ‘x-’ to its name.
+
+            The inverse of this, removing ‘x-’ from the front of each file name, is also possible:
+            one method is 
+                % R ^x-\(.*\)$ RET \1 RET;
+
+
+* Move cursor position
+
+    * Goto line
+
+        M_g M_g 1
+
+    * Move cursor position (not in anaconda-mode)
+
+        M_r
+
+    * Point register
+
+        CTRL_x r(egister) SPC      a -- (Point register)Store current point as "a"
+        CTRL_x r(egister) j        a -- (Point register)Move to point in "a"
+
+        CTRL_x r(egister) s(et)    a -- (Text  register)store region as "a"
+        CTRL_x r(egister) g(et)    a -- (Text  register)same as i(nsert) "a"
+        CTRL_x r(egister) r(et)    a -- (Text  register)store rectangle as "a"
+
+    * Paragraph (문장)
+
+        * M_x forward-paragraph
+
+            M_SHIFT_}
+
+        * M_x backward-paragraph
+
+            M_SHIFT_{
+
+        * M_x mark-paragraph
+
+            M_h
+
+    * Sentence (문단)
+
+        * Beginning of statement
+
+            M_a (backward-sentence)
+            to the start of current block in emacs
+
+        * End of statement
+
+            M_e (forward-sentence)
+            to the end of current block in emacs
+
+        * Kill statement
+
+            M_k (kill-sentence)
+
+    * ()
+
+        M_x show-paren-mode
+
+        * ()안에서 이동
+
+            CTRL_M_f, CTRL_M_RIGHT, ESC then CTRL_<ARROW>
+            CTRL_M_b, CTRL_M_LEFT , ESC then CTRL_<ARROW>
+
+        * ()안에서 삭제
+
+            CTRL_M_k
+
+
+* Editing
+
+    * Coding Systems
+
+        * To see the current encoding
+
+            CTRL_h v buffer-file-coding-system RET
+
+        * the coding system to use when saving or reverting the file
+
+            CTRL_x RET f coding RET (set-buffer-file-coding-system)
+
+        * Revisit the current file
+          using the coding system coding (If you visit a file with a wrong coding system)
+
+            CTRL_x RET r coding RET (revert-buffer-with-coding-system)
+
+        * If a piece of text
+          has already been inserted into a buffer using the wrong coding system,
+          you can redo the decoding of it using
+
+              M_x recode-region
+
+          It first encodes the region using the wrong coding system,
+          then decodes it again using the proper coding system.
+
+    * Remove whole line
+
+        CTRL_SHIFT_BACKSPACE (kill-whole-line)
+
+    * Undo
+
+        CTRL__
+        CTRL_/
+
+    * overwrite-mode
+
+        M_x overwrite-mode (a minor mode).
+
+    * To replace link number
+    
+        M_x query-replace-regexp >> \[[[:digit:]]+\] >> (EMPTY)
+
+    * New line
+
+        * 현재줄 위에 입력
+
+            M_m CTRL_o
+
+        * 현재줄 아래에 입력 (line 끝에서 개행)
+
+            CTRL_e CTRL_m
+
+    * Join lines
+
+        * 현재 줄을 위로 merge
+
+            CTRL_SHIFT_^
+
+        * 아랫줄 당기기
+
+            CTRL_u CTRL_SHIFT_^
+
+    * Repeat
+
+        * To repeat N times
+
+            CTRL_u <N> CMD
+            M_<N> CMD
+
+        * Repeat previous command
+
+            CTRL_x z
+            Once you pressed it, just press only z after that and
+
+        * Macros
+
+            F3 insert someting F4
+            F4
+
+            CTRL_x SHIFT_(   Start Recording
+            CTRL_x SHIFT_)   Stop Recording
+            CTRL_x e         Play Macro (press e without Cx to play again)
+
+        * Text register
+
+            CTRL_x r(egister) s(et)    a -- (Text  register)store region    as a
+            CTRL_x r(egister) g(et)    a -- (Text  register)same as i(nsert) a
+            CTRL_x r(egister) r(et)    a -- (Text  register)store rectangle as a
+            
+            CTRL_x r(egister) SPC      a -- (Point register)Store current point as "a"
+            CTRL_x r(egister) j        a -- (Point register)Move to point in "a"
+
+    * Reload file
+
+        M_x revert-buffer
+
+    * Read only
+
+        CTRL_x CTRL_q
+        M_x read-only-mode
+
+    * Vertical region
+
+        * yank/cut/insert
+
+            CTRL_ENTER
+            M_x cua-rectangle-mark-mode
+
+            (1/2)M_x cua-mode or M_x cua-selection-mode
+            (2/2)M_x cua-set-rectangle-mark
+
+        * yank/cut
+
+            CTRL_x SPACE
+            M_x rectangle-mark-mode
+
+    * Indent
+
+        * Indent
+
+            * M_i     (4 space)
+            * CTRL_i  (윗 칸의 indentation level까지 indent)
+            * CTRL_u  4 SPACE
+
+        * Remove indent (Delete spaces and tabs around point)
+
+            * M_\ (back-to-indentation)
+
+        * M_x back-to-indentation (현재 줄의 글자 시작점으로 이동)
+
+            * M_m CTRL_g 
+
+        * Block indent (in region, text-mode)
+
+            * NO org-mode, NO cua-mode (CTRL_x key mapping이 NO org-mode, NO cua-mode에서는 틀림)
+
+                * indent-tabs-mode nil일 경우 TAB은 1 space로 처리
+                * CTRL_x TAB SHIFT_LEFT  ;; SHIFT 없이는 1칸씩 이동
+                * CTRL_x TAB SHIFT_RIGHT ;; SHIFT 없이는 1칸씩 이동
+                * CTRL_u  4 CTRL_x TAB (To unindent, CTRL_u -4 CTRL_x TAB)
+                * CTRL_u  4 M_x indent-code-rigidly
+
+            * In cua-mode, to insert 4 spaces
+
+                vertical region, press <RIGHT> key 4 times, M_x open-rectangle
+
+    * center-region
+
+        M_x set-fill-column
+        M_x center-region
+        M_x center-line
+
+    * Jump to previous mark in current buffer
+
+        CTRL_u CTRL_SPACE
+        CTRL_x CTRL_x, exchange-point-and-mark
+
+    * Font
+
+        * To find out current font
+
+            M_x describe-font
+
+        * Font size (Font 크기 변경시 CTRL_x를 1번은 눌러 주어야 함)
+
+            CTRL_x CTRL_-
+            CTRL_x CTRL_+
+            CTRL_x CTRL_0
+
+        * Remove text properties(style)
+
+          set and remove-text-properties seems to have disappeared from Emacs - Stack Overflow
+          https://stackoverflow.com/questions/73779629/set-and-remove-text-properties-seems-to-have-disappeared-from-emacs
+
+            * M_x load-library facemenu
+            * Select region, M_x facemenu-remove-all (fa--a) RET to strip
+
+            * The cursor inside the colored text, type "M_o M_o"
+
+    * Cursor부터 word 끝까지 선택(특수문제 제외)
+
+        M_SHIFT_@
+
+    * Execute::replaces the region with the output
+
+        CTRL_u M_SHIFT_| cmd RET (Run with region contents as input)
+        CTRL_u M_SHIFT_! cmd RET
+
+    * Shell
+
+        * To change the current working directory
+
+            M_x cd
+
+        * M_x term
+
+            * Shell 선택 가능
+            * 일부 기능 사용 불가
+            * CTRL_c 를 먼저 실행 후 M_x key sequence 사용
+            * CTRL_c o switch window
+
+        * M_x eshell
+
+            * Emacs editing key 사용 가능
+            * CTRL_d key(exit) 사용 불가 - exit 명령을 입력하여 종료
+
+        * M_x shell (새 window에서 열림)
+
+            * Emacs editing key 사용 가능
+            * CTRL_d key(exit) 사용 가능
+            * CTRL_u M_x shell  -- To invoke another shell
+            * M_p               -- Show previous commands
+            * CTRL_c CTRL_c     -- Same as CTRL_C
+            * CTRL_c CTRL_z     -- Suspend job
+            * CTRL_c CTRL_d     -- EOF
+
+            * M_x append-to-buffer RET
+              will enter the selected text into the specified buffer at point
+
+    * Completion
+
+        * M_/
+
+        * using dictionary
+
+            * CTRL_M_i (in text-mode)
+            * ESC_TAB 
+            * M_x ispell-complete-word
+
+    * Insert unicode (TeX)
+
+        by name
+           M_x insert-char RIGHTWARDS ARROW
+
+        by hexadecimal
+            M_x insert-char 2192 (hexadecimal of the Unicode)
+
+        by Char ID in Decimal
+           M_x insert-char #10r
+
+        Input Method (TeX)
+            M_x set-input-method RET TeX
+                \beta
+                \sum
+
+            M_x toggle-input-method, bound to CTRL_\
+
+            M_x describe-input-method TeX
+                To find all the supported TeX commands
+
+                | Description           | Command | Output |
+                |-----------------------+---------+--------|
+                | Less than             | <       | A < B  |
+                | Greater than          | >       | A > B  |
+                | Less or equal than    | \le     | A ≤ B  |
+                | Greater or equal than | \ge     | A ≥ B  |
+                | Much smaller          | \ll     | A ≪ B  |
+                | Much greater          | \gg     | A ≫ B  |
+
+    * Sort - https://www.gnu.org/software/emacs/manual/html_node/emacs/Sorting.html
+
+        M_x sort-lines
+        M_x reverse-region
+        M_x delete-duplicate-lines
+        M_x sort-numeric-fields
+
+    * Filter
+
+        M_x delete-matching-lines RET hello RET
+        M_x keep-lines with argument ^[A-Z ]+$
+
+* Window manager
+
+    * M_x desktop-save-mode
+
+        M_x desktop-save
+        M_x desktop-read
+        M_x desktop-change-dir
+        M_x desktop-clear 
+
+    * Buffer
+
+        * M_x ibuffer
+
+            * M_x buffer-menu-open
+
+            * Open ibuffer in another window
+
+                CTRL_x_b
+
+            * Meaning of symbol
+
+                %   읽기 전용
+                *   수정
+                D   삭제 표시
+
+            * In ibuffer (buffer list)
+
+                ibuffer-redisplay       : l
+                ibuffer-update          : g
+                open in current window  : f
+                open in another window  : o            
+                mark/unmark             : m, u
+                mark and open all       : m v
+                mark kill and execute   : d x
+                quit                    : q
+
+        * Switching buffer
+
+            * M_x switch-to-buffer
+
+                CTRL_x b (RELEASE CTRL then press b) 
+
+            * M_x switch-to-buffer-other-window
+
+                CTRL_x 4 b
+
+    * Window
+
+        * Rotate buffer in current window
+
+            CTRL_x <RIGHT> (next-buffer)
+            CTRL_x <LEFT>  (previous-buffer)
+
+        * Swap buffers in 2 windows
+
+            M_x window-swap-states
+
+        * Save/restore window configuration
+
+            * Using register
+
+                CTRL_x r(egister) w(indow) x   to store the window configuration and
+                CTRL_x r(egister) j(ump)   x   to restore it,
+                (where x is the name of the register to store it in.)
+            
+            * Using winner-mode - http://xahlee.info/emacs/emacs/emacs_winner_mode.html 
+
+                CTRL_c <LEFT>
+                M_x winner-undo
+                 
+                CTRL_c <RIGHT>  
+                M_x winner-redo
+
+        * Kill buffer and close current window
+
+            CTRL_x 4 0 (kill-buffer-and-window)
+
+        * Resize
+
+            *  M_x maximize-window
+            *  M_x minimize-window
+
+            * Resize vertical window
+
+                * Enlarge
+
+                    CTRL_x }
+                    M_x enlarge-window-horizontally
+                    ex) CTRL_u 20 CTRL_x }  : 20번 크게
+
+                * Shrink
+
+                    CTRL_x {
+                    M_x shrink-window-horizontally
+                    ex) CTRL_u 20 CTRL_x {  : 20번 작게
+
+            * Resize horizonal window
+
+                * enlarge-window
+
+                    CTRL_x ^
+                    M_x enlarge-window
+                    
+                * shrink-window
+
+                    M_x shrink-window
+
+            *  M_x balance-windows
+
+                CTRL_x +
+
+    * frame
+
+		M_x delete-frame        CTRL_x 5 0
+		M_x delete-other-frames CTRL_x 5 1
+		M_x make-frame-command  CTRL_x 5 2
+		M_x other-frame         CTRL_x 5 o
+
+		* open a with a new frame 
+
+			CTRL_x 5 f
+			M_x find-file-other-frame
+
+        * diff
+
+            M_x ediff-buffers
+            M_x ediff
+
+    * M_x tab-bar-mode - https://www.gnu.org/software/emacs/manual/html_node/emacs/Tab-Bars.html
+
+        tab-new                     CTRL_x t 2
+
+        tab-next                    CTRL_TAB       ,CTRL_x t o
+        tab-previous                CTRL_SHIFT_TAB ,CTRL_x t o
+
+        tab-bar-select-tab-by-name  CTRL_x t RET
+
+        tab-bar-switch-to-prev-tab
+        tab-bar-switch-to-next-tab
+        tab-move                    CTRL_x t m
+
+        tab-rename                  CTRL_x t r
+
+        tab-close                   CTRL_x t 0
+        tab-close-other             CTRL_x t 1
+        tab-bar-undo-close-tab
+
+
+* Find and replace
+
+    * Incremental search
+
+        * Search forward
+
+            CTRL_s, M_x isearch-forward
+            CTRL_s to next
+            CTRL_r to previous
+
+            ex) To search a TAB char.
+                CTRL_s CTRL_q TAB
+
+        * Search backward
+
+            CTRL_r, M_x isearch-backward
+            CTRL_s to next
+            CTRL_r to previous
+
+        * Search word under cursor
+
+            M_SHIFT .
+            CTRL_s CTRL_w
+
+        * To find unicode char.
+
+            CTRL_s (M_x isearch-forward)
+
+            1/2.  Insert character
+                CTRL_x 8 RET #o7 (octal digits)
+                CTRL_x 8 RET #x7 (hex digits)
+
+            2/2.
+                CTRL_q followed by the octal digits - e.g. CTRL_q 344
+
+        * RegEXP search
+
+            * Incremental
+
+                CTRL_M_s, M_x isearch-forward-regexp
+                https://www.emacswiki.org/emacs/RegularExpression
+
+            * Reverse incremental
+
+                CTRL_M_r, M_x isearch-backward-regexp
+                https://www.emacswiki.org/emacs/RegularExpression
+
+    * Substitution
+
+        * M_x query-replace-regexp
+        
+        * M_x query-replace
+
+            M_SHIFT_%       M_SHIFT_@ y M_SHIFT_%
+
+            Space or y      replace this occurence
+            !               replace all following occurences
+            Del or n        skip
+            .               replace current one and exit
+            ,               replace and pause (resume with Space or y)
+            ^               back to previous match
+            RET or q        quit
+
+            | to replace one match
+            |     SPC or y 
+            | 
+            | to skip to next
+            |     Delete or n 
+            | 
+            | to exit
+            |     RET or q 
+            | 
+            | to replace one match and exit
+            |     Period 
+            | 
+            | to replace but not move point immediately
+            |     , 
+            | 
+            | to enter recursive edit (C-M-c to get out again)
+            |     C-r 
+            |     
+            | to delete match and recursive edit
+            |     C-w 
+            | 
+            | to clear the screen, redisplay, and offer same replacement again
+            |     C-l 
+            | 
+            | to replace all remaining matches in this buffer with no more questions
+            |     ! 
+            | 
+            | to move point back to previous match
+            |     ^ 
+            | 
+            | to undo previous replacement
+            |     u 
+            | 
+            | to undo all replacements
+            |     U 
+            | 
+            | to edit the replacement string
+            |     e 
+            | 
+            | to edit the replacement string with exact case
+            |     E 
+            | 
+            | In multi-buffer replacements 
+            | 
+            |     to replace all remaining matches in all remaining buffers with no more questions
+            |         Y 
+            | 
+            |     to skip to the next buffer without replacing remaining matches in the current buffer
+            |         N 
+
+        * Replace with a newline without confirmation
+
+            M_x replace-string RET ; RET CTRL_q CTRL_j (CRLF)
+
+        * To replace a region with yank buffer contents
+
+            1/3. Copy source (M_w)
+            2/3. Select target to be replaced and delete it (CTRL_w)
+            3/3. Replace it with the prior-copied region (CTRL_y, M_y)
+
+        * To replace ending with two spaces
+
+            M_x query-replace-regexp >> [\ ]*$ >> ✔✔^j
+
+        * Letter case
+
+            upcase-word
+
+                M_u
+            
+            downcase-word
+
+                M_l
+
+
+* Advanced
+
+    * Markdown
+
+        GitHub - jrblevin/markdown-mode: Emacs Markdown Mode
+        https://github.com/jrblevin/markdown-mode
+
+        * M_x markdown-mode
+        * Preview : CTRL_c CTRL_c p
+
+    * Python
+
+        * Indent/unindent
+
+            * M_x python-shift-right (CTRL_c SHIFT_>)
+            * M_x python-shift-left  (CTRL_c SHIFT_<)
+
+        * M_x python-mode + M_x anaconda-mode
+            * "__main__" block code는 실행 안해줌
+
+            * 설치
+                * M_x package-list-packages
+                * M_x package-refresh-contents
+                * M_x package-install RET anaconda-mode RET
+
+            * CTRL_M_i (anaconda-mode-complete)
+
+            * Documentation
+                CTRL_c CTRL_d
+
+            * Open Python shell
+                CTRL_c CTRL_p
+                M_x run-python
+
+            * Run the content (in the opened python shell)
+                CTRL_c CTRL_c
+
+            * Run the selected region (in the python shell)
+                CTRL_c CTRL_r
+
+            * Switch to an existing python shell
+                CTRL_x o
+                CTRL_c CTRL_z
+
+            * M_;      (comment-region, with the region active)
+
+        * M_x lsp-mode
+
+    * M_x highlight-indentation-mode
+
+        M_x package-install RET highlight-indentation RET
+        M_x highlight-indentation-mode
+
+        Manual installation
+            .emacs
+                ;; Highlight-Indentation-for-Emacs/highlight-indentation.el at master · antonj/Highlight-Indentation-for-Emacs · GitHub
+                ;; https://github.com/antonj/Highlight-Indentation-for-Emacs/blob/master/highlight-indentation.el
+                (add-to-list 'load-path "~/.emacs.d/Highlight-Indentation-for-Emacs/")
+                (load "highlight-indentation.el")
+
+    * M_x org-mode (table)
+
+        Org-Mode Reference Card
+        https://orgmode.org/worg/orgcard.html
+
+        * Help
+
+            M_x org-info
+
+        * Timestamps
+
+            insert
+                CTRL_c .
+
+                at cursor, ±1 day
+                    S_RIGHT/LEFT 
+
+                at cursor, change year/month/day by ±1
+                    S_UP/DOWN 
+
+            access the calendar for the current date
+                CTRL_c >
+
+                to remove calendar around
+                    SHIFT_>
+                    SHIFT_<
+
+        * Collapse & expand headings
+
+            M_x outline-show-all
+            M_x outline-hide-other
+
+            * Visibility cycling
+
+                TAB
+                SHIFT_TAB
+
+        * TOC
+
+            Table of Contents (The Org Manual)
+            https://orgmode.org/manual/Table-of-Contents.html
+
+            The table of contents includes all headlines in the document.
+            Its depth is therefore the same as the headline levels in the file.
+
+            If you need to use a different depth, or turn it off entirely,
+            set the org-export-with-toc variable accordingly.
+            You can achieve the same on a per file basis,
+            using the following ‘toc’ item in ‘OPTIONS’ keyword:
+
+                #+OPTIONS: toc:2          (only include two levels in TOC)
+                #+OPTIONS: toc:nil        (no default TOC at all)
+
+        * Manipulating org table
+
+            * Clear a cell
+
+                CTRL_c SPACE
+
+            * Cut row / column
+
+                M_SHIFT_UP
+                M_SHIFT_LEFT
+
+            * Border below / above
+
+                CTRL_C, RET
+                CTRL_U, CTRL_C, DASH (-)
+
+            * New
+
+                * row / column (after)
+
+                    M_SHIFT_DOWN
+                    M_SHIFT_RIGHT
+
+                * column (before)
+
+                    | <TAB>
+
+            * Swap (switch)
+
+                * column / row
+
+                    M_<UP|DOWN|LEFT|RIGHT>
+
+                * content
+
+                    SHIFT_LEFT
+                    SHIFT_RIGHT
+                    SHIFT_UP
+                    SHIFT_DOWN
+
+            * replace - 현재 column값을 아래 column에 overwrite
+
+                SHIFT_<RET>
+
+            * Tables row/column numbers display turned on/off
+
+                CTRL_C SHIFT_}
+
+            * Formula debugging has been turn on/off
+
+                CTRL_C SHIFT_{
+
+            * Etc.
+
+                Open the current cell in a separate Emacs buffer.
+                CTRL_C, BACKTICK (`)
+
+                Sum column.
+                CTRL_C, Plus (+)
+
+        * CSV, TSV to a table
+
+            Select region, then
+            CTRL_c |
+
+            999 이상의 값 조정
+            set-variable org-table-convert-region-max-lines
+
+        * Export
+
+            M_x org-table-export
+
+            Format)
+                * orgtbl-to-csv
+                * orgtbl-to-tsv
+                * orgtbl-to-html
+                * orgtbl-to-latex
+                * orgtbl-to-orgtbl
+
+        * Column Groups
+
+            Column Groups (The Org Manual)
+            https://orgmode.org/manual/Column-Groups.html
+
+            you can use a special row where the first field contains only ‘/’. 
+            The further fields can either contain
+            ‘<’ to indicate that this column should start a group, 
+            ‘>’ to indicate the end of a column, or
+            ‘<>’ (no space between ‘<’ and ‘>’) to make a column a group of its own.
+         
+            Upon export, boundaries between column groups are marked with vertical lines.
+            Here is an example:
+
+            | N | N^2 | N^3 | N^4 | sqrt(n) | sqrt[4](N) |
+            |---+-----+-----+-----+---------+------------|
+            | / |  <  |     |  >  |       < |          > |
+            | 1 |  1  |  1  |  1  |       1 |          1 |
+            | 2 |  4  |  8  | 16  |  1.4142 |     1.1892 |
+            | 3 |  9  | 27  | 81  |  1.7321 |     1.3161 |
+            |---+-----+-----+-----+---------+------------|
+            #+TBLFM: $2=$1^2::$3=$1^3::$4=$1^4::$5=sqrt($1)::$6=sqrt(sqrt(($1)))
+
+            It is also sufficient to just insert the column group starters
+            after every vertical line you would like to have:
+
+            | N | N^2 | N^3 | N^4 | sqrt(n) | sqrt[4](N) |
+            |---+-----+-----+-----+---------+------------|
+            | / | <   |     |     | <       |            |
+
+        * mode & environment
+
+            Captions (The Org Manual)
+            https://orgmode.org/manual/Captions.html
+
+                #+CAPTION: This is the caption for the next table (or link)
+
+            Tables in LaTeX export (The Org Manual)
+            https://orgmode.org/manual/Tables-in-LaTeX-export.html
+
+               ':mode'
+
+                    #+ATTR_LATEX: :mode table
+                    #+ATTR_LATEX: :mode math
+                    #+ATTR_LATEX: :mode inline-math % exported as-is
+                    #+ATTR_LATEX: :mode verbatim
+                    #+ATTR_LATEX: :mode tabbing
+
+                ':environment'
+
+                    #+ATTR_LATEX: :environment tabularx
+                    #+ATTR_LATEX: :environment longtable 
+                    #+ATTR_LATEX: :environment array
+                    #+ATTR_LATEX: :environment tabu
+                    #+ATTR_LATEX: :mode math :environment bmatrix :math-suffix \times
+                    #+ATTR_LATEX: :mode math :environment bmatrix
+
+               ':caption'
+               ':float'
+               ':placement'
+               ':align'
+               ':font'
+               ':width'
+               ':options'
+               ':spread'
+               ':booktabs'
+               ':center'
+               ':rmlines'
+               ':math-prefix'
+               ':math-suffix'
+               ':math-arguments'
+
+    * LaTeX
+
+        * Export to a PDF file
+
+            CTRL_c CTRL_e
+
+            * L to export file
+            * O to open it afterwards.
+
+        * Date
+
+            #+DATE: \today
+
+        * Image
+
+            [[/home/ramces/documents/projects/latex/01/img1.png]]
+            [[./img2.png]]
+
+        * Heading
+
+            * This is the first heading
+                This is the paragraph of the first heading
+             
+            ** This is the first subheading
+                This is a second-level heading
+
+        * Folding
+
+            * Headers
+
+                #+STARTUP: fold
+                #+STARTUP: nofold
+                #+STARTUP: content
+                #+STARTUP: showeverything
+
+            * Toggle folding/unfolding
+
+                TAB
+                SHIFT_TAB
+
+    * M_x graphviz-dot-mode (flowchart)
+
+        * Compile and preview
+
+            CTRL_c CTRL_p (graphviz-dot-preview)
+
+    * emoji
+
+        .emacs
+
+            1.
+
+                ;; Emoji
+                ;; 1/2
+                (set-fontset-font t 'symbol "Apple Color Emoji")
+                (set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
+                ;; (set-fontset-font t 'symbol "Segoe UI Emoji" nil 'append)
+                ;; (set-fontset-font t 'symbol "Symbola" nil 'append)
+
+            2.
+                ;; Emoji
+                ;; 1/2
+                (set-fontset-font t '(#x1f300 . #x1fad0) (font-spec :family "Noto Color Emoji"))
+                ;; 2/2 - sudo apt-get install -y fonts-symbola
+                ;; (set-fontset-font t 'symbol "Symbola" nil 'append)
+
+        * To insert color emoji
+
+            CTRL_. SPACE
+
+    * DocView
+
+        * Scroll (within current page)
+
+            * CTRL_p
+            * CTRL_n
+
+        * Scroll (all pages)
+         
+            M_x set-variable doc-view-continuous t
+                * CTRL_p displays the previous page
+                * CTRL_n displays the next page
+                
+            SPACE
+            
+        * Next page
+
+            n, PageDown, CTRL_x ]
+         
+        * Previous page
+
+            p, PageUp, CTRL_x [
+         
+        * To the first page
+
+            M_<
+            
+        * To the last page
+
+            M_>
+            
+        * To jump to a page
+
+            M_g M_g
+            M_g g
+         
+        * Enlarge or shrink the document
+
+            +
+            -
+
+        * To start a new search
+
+            CTRL_u CTRL_s
+            CTRL_u CTRL_r
+
+    * M_x EWW
+
+        |--------------------------------------+----------------------------------|
+        | FUNCTION OR DESCRIPTION              | SHORTCUT                         |
+        |--------------------------------------+----------------------------------|
+        | To open a new URL                    | G                                |
+        |--------------------------------------+----------------------------------|
+        | M_x eww-previous-url                 | l                                |
+        | M_x eww-forward-url                  | r                                |
+        |--------------------------------------+----------------------------------|
+        | M_x eww-copy-page-url                | w                                |
+        | M_x eww-browse-with-external-browser | &                                |
+        |--------------------------------------+----------------------------------|
+        | M_x eww-add-bookmark                 | b                                |
+        | M_x eww-list-bookmarks               | B                                |
+        | M_x eww-list-histories               | H                                |
+        | M_x eww-quit                         | q                                |
+        |--------------------------------------+----------------------------------|
+        | M_x eww-reload                       | g                                |
+        | M_x eww-view-source                  | v                                |
+        | To hide image                        | M_x image-mode and CTRL_C CTRL_C |
+        |--------------------------------------+----------------------------------|
+
+
+* Installation
+
+    * To list and refresh all packages
+
+        M_x package-list-packages
+        M_x package-refresh-contents
+
+    * Anaconda mode - https://github.com/pythonic-emacs/anaconda-mode
+
+        M_x package-install RET anaconda-mode RET
+
+    * Graphviz - https://github.com/ppareit/graphviz-dot-mode
+
+        Download
+            windows_10_cmake_Release_graphviz-install-8.1.0-win64.exe*
+            from https://gitlab.com/graphviz/graphviz/-/releases
+
+        M_x package-install RET gnuplot RET
+
+    * Indent highlighter
+
+        M_x package-install RET highlight-indentation RET
+
+    * Markdown - https://jblevins.org/projects/markdown-mode/
+
+        sudo apt install elpa-markdown-mode emacs-goodies-el
+        M_x package-install RET markdown-mode RET
+
+    * Company mode
+
+        M_x package-install RET company RET
+
+    * xclip (xclip-mode)
+
+        GNU ELPA - xclip
+        https://elpa.gnu.org/packages/xclip.html
+
+        Description
+
+            This package allows Emacs to copy to and paste from the GUI clipboard
+            when running in text terminal.
+
+        To install this package, run in Emacs:
+
+            M_x package-install RET xclip RET
+
+        To use, just add (xclip-mode 1) to your ~/.emacs or do 'M_x clip-mode'
+
+            .emacs
+                (custom-set-variables
+                 ;; custom-set-variables was added by Custom.
+                 ;; If you edit it by hand, you could mess it up, so be careful.
+                 ;; Your init file should contain only one such instance.
+                 ;; If there is more than one, they won't work right.
+                 '(ispell-dictionary nil)
+                 '(package-selected-packages
+                   '(xclip tuareg cmake-mode use-package lsp-ui lsp-dart hover graphviz-dot-mode flycheck company anaconda-mode)))
+
+                (xclip-mode 1)
+
+* Configure
+
+    * Color scheme
+
+        * M_x load-theme adwaita -- fair
+          | 참고 )
+          |     * manoj-dark
+          |     * tsdh-dark  -- for text editing  
+          |     * wheatgrass -- for reading
+    
+    * M_x set-variable
+
+        make-backup-files
+        auto-save-default
+        indent-tabs-mode
+            nil
+
+    * M_SHIFT_:
+
+        (setq tab-stop-list (number-sequence 4 120 4))
+    
+    * init
+        ;; How to proceed on package.el signature check failure - Emacs Stack Exchange
+        ;; https://emacs.stackexchange.com/questions/233/how-to-proceed-on-package-el-signature-check-failure/53142#53142
+        (setq package-check-signature nil)
+
+        ;; Setting up::Melpa
+        (require 'package)
+        (add-to-list 'package-archives
+            '("melpa-stable" . "https://stable.melpa.org/packages/"))
+        (package-initialize)
+
+        ;; Setting up::use-package
+        (unless (package-installed-p 'use-package)
+          (package-refresh-contents)
+          (package-install 'use-package))
+
+        ;; Theme
+        (load-theme 'adwaita t)
+        ;; (load-theme 'manoj-dark t)
+        (tool-bar-mode -1)
+        (menu-bar-mode -1)
+
+        ;;disable splash screen and startup message
+        (setq inhibit-startup-message t) 
+        (setq initial-scratch-message nil)
+
+        ;; Basic config for Windows - C:\Users\koowgnojeel\AppData\Roaming\.emacs
+        ;; (set-file-name-coding-system 'cp949-dos)
+        ;; (setq default-directory "C:/Users/koowgnojeel")  ;; Set the default directory for file operations
+
+        ;; Basic config
+        (set-language-environment "Korean")
+        (prefer-coding-system 'utf-8)
+
+        (setq-default make-backup-files nil)  ;; '(setq make-backup-files nil) ; stop creating backup (~files)
+        (setq-default auto-save-default nil)  ;; '(setq auto-save-default nil) ; stop creating #autosave #files
+        (setq-default indent-tabs-mode nil)
+        (setq-default tab-stop-list (number-sequence 4 120 4))
+        (setq-default truncate-lines t)
+        (add-to-list 'default-frame-alist
+                     '(font . "Monospace-12"))
+        ;; (global-display-line-numbers-mode)
+
+        ;; ERC
+        ;; https://gist.github.com/drobati/585391
+        ;; (custom-set-faces
+        ;;  '(erc-input-face ((t (:foreground "#FFA500" :weight light :family "Anonymous"))))
+        ;; )
+        ;;
+        ;; (require 'erc)
+        ;; (set-face-foreground 'erc-input-face "#FFA500") 
+        ;;
+        (with-eval-after-load 'erc
+            ;; https://doc.endlessparentheses.com/Fun/erc-track-switch-buffer.html
+            ;; https://systemcrafters.net/live-streams/june-04-2021/
+            ;; erc-track-switch-buffer (C-c C-SPC if erc-track-enable-keybindings is t)
+
+            (load-theme 'manoj-dark t)
+            (set-face-foreground 'erc-input-face "#FFA500")
+
+            ;; Logging - http://www.nihamkin.com/2013/12/04/how-to-enable-logging-of-chat-sessions-in-erc/
+
+            ;; it is not possible to set erc-log-mode variable directly 
+            (erc-log-mode) 
+
+            ;; The directory should be created 
+            (setq erc-log-channels-directory "~/.erc/logs/")
+
+            (setq erc-generate-log-file-name-function (quote erc-generate-log-file-name-with-date))
+            (setq erc-save-buffer-on-part nil)
+            (setq erc-save-queries-on-quit nil)
+            (setq erc-log-write-after-insert t)
+            (setq erc-log-write-after-send t)    
+
+            (custom-set-variables
+                '(erc-nick "koowgnojeel")
+                '(erc-port 6666)
+                '(erc-prompt-for-password nil)
+                '(erc-server "irc.libera.chat")
+                '(erc-server-coding-system (quote utf-8))
+            )
+        )
+
+        ;; doc-view
+        (setq doc-view-continuous t)
+
+        ;; Emoji
+        ;; 1/2
+        (set-fontset-font t 'symbol "Apple Color Emoji")
+        (set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
+        ;; (set-fontset-font t 'symbol "Segoe UI Emoji" nil 'append)
+        ;; (set-fontset-font t 'symbol "Symbola" nil 'append)
+
+        ;; 2/2 - sudo apt-get install -y fonts-symbola
+        ;; (set-fontset-font t 'symbol "Symbola" nil 'append)
+
+        ;; for xterm to GUI clipboard copy
+        (xclip-mode 1)
+
+        ;; tab-bar-mode
+        (custom-set-faces
+         '(tab-bar-tab ((t (:inherit tab-bar :background "orange" :box (:line-width 1 :style released-button))))))
+
+        ;; tab-bar-mode custom keybindings
+        (global-set-key (kbd "ESC ]") 'tab-bar-switch-to-next-tab)
+        (global-set-key (kbd "ESC [") 'tab-bar-switch-to-prev-tab)
+
+        ;; Highlight-Indentation-for-Emacs/highlight-indentation.el at master · antonj/Highlight-Indentation-for-Emacs · GitHub
+        ;; https://github.com/antonj/Highlight-Indentation-for-Emacs/blob/master/highlight-indentation.el
+        (add-to-list 'load-path "~/.emacs.d/Highlight-Indentation-for-Emacs/")
+        (load "highlight-indentation.el")
+
+        ;; anaconda-mode
+        (add-hook 'python-mode-hook 'anaconda-mode)
+        ;; (setq python-shell-interpreter "C:/Program Files/Python310/python.exe")
+
+        ;; Setting up::graphviz-dot-mode
+        (use-package graphviz-dot-mode
+            :ensure t
+            :config
+            (setq graphviz-dot-indent-width 4))
+
+        (custom-set-variables
+         ;; custom-set-variables was added by Custom.
+         ;; If you edit it by hand, you could mess it up, so be careful.
+         ;; Your init file should contain only one such instance.
+         ;; If there is more than one, they won't work right.
+         '(erc-server-coding-system 'utf-8)
+         '(ispell-dictionary nil)
+         '(package-selected-packages
+           '(lsp-java xclip tuareg cmake-mode use-package lsp-ui lsp-dart hover graphviz-dot-mode flycheck company anaconda-mode)))
+
+
+    * M_x menu-bar-mode
+
+    * M_x tool-bar-mode
+
+    * M_x whitespace-mode
+
+    * M_x display-line-numbers-mode
+
+
+* Wrap text
+
+    * M_x toggle-truncate-lines
+    * M_x visual-line-mode
+
+    Emacs: Hard-Wrap Lines (fill-paragraph) - Reformat Long Line to Multiple Short Lines
+    http://xahlee.info/emacs/emacs/emacs_line_hard_wrap.html
+
+        paragraph
+            M_x fill-paragraph (M_q)
+
+                Break a long line into multiple lines
+                (by inserting newline characters.)
+
+        region
+            M_x fill-region
+
+                reformat a text selection into multiple short lines.
+
+        auto-fill
+            M_x auto-fill-mode
+                toggle auto-fill-mode.
+
+                When on, automatically insert newline character as you type 
+                when line reaches the right margin (fill-column).
+
+                ;; auto hard-wrap lines
+                (auto-fill-mode 1)
+
+        conf.
+            fill-column
+                Variable. The number of chars before fill-paragraph etc commands kicks in.
+
+                (setq fill-column 70)
+                ;; default is 70
+
+            M_x set-fill-column (CTRL_x f)
+                Set the max characters per line used by "fill" commands.
+
+                Note: these commands insert newline characters into your file.
+                This type of wrapping is called hard-wrap.
+
+                Hard-wrap convention of 80 chars came from punched card.
+
+                You should avoid hard-wrap when possible; 
+                add newline char only at logical positions.
+                http://xahlee.info/UnixResource_dir/writ/hard-wrap.html
+
+        2 spaces ending
+            When M_x fill-paragraph etc, emacs reformat it so that
+            there are 2 spaces after a period.
+
+                ;; make sentence ending by single space
+                (setq sentence-end-double-space nil )
+
+
+* Build
+
+    sudo apt build-dep emacs
+
+    | `apt-get build-dep` packagename will install all files
+    | needed to rebuild the packagename from the source. 
+    | 
+    | You can acquire source with `apt-get source packagename`
+    | and re-build it with `cd packagename* && debuild`.
+    | 
+    | Nowadays you usually want to use `mk-build-deps packagename`
+    | instead to that
+    | you can easily uninstall the packages only needed for building.
+    | 
+    | 관련 오류
+    |     $ sudo apt build-dep libreoffice
+    |     E: You must put some 'deb-src' URIs in your sources.list
+
+
+

@@ -1,0 +1,834 @@
+index
+    __Reference
+    __Overview
+    __Help
+    __Configuration
+    __Remote_origin
+    __Branch
+    __Log_show
+    __Changes
+
+
+__Reference
+
+    GitHub Pages | Websites, hosted directly from your GitHub repository. Just edit, push
+    https://pages.github.com/
+
+    GitBook - standalone platform
+    https://www.gitbook.com/
+
+    gists · to share code snippets 
+    https://gist.github.com/
+
+    GitHub CLI - GitHub specific commands extending the functionality of Git.
+    https://cli.github.com/
+
+    GitHub Desktop
+    https://github.com/apps/desktop
+
+
+__Overview
+
+    Workflow
+
+        working directory       staging area        git directory(repository)
+              |                      |                          |
+              |  stage files(수정)   |                          |
+              |--------------------->|                          |
+              |                      |  commit & push           |
+              |                      |------------------------->|
+
+    Getting and Creating Projects
+
+        - init(Initializes a new Git repository.)
+        - clone
+
+    Basic Snapshotting
+
+        - add
+        - status
+        - diff
+        - commit
+        - reset
+        - rm, mv
+        - stash
+
+    Branching and Merging
+
+        - branch
+        - checkout
+        - merge
+        - log
+        - tag
+
+    Sharing
+
+        - fetch
+        - pull(If you want the most up-to-date version of your repository to work with.)
+        - push(If you want your commits to be visible online on GitHub as well.)
+        - remote
+
+    Inspection and Comparison
+
+        - log
+        - diff
+
+__Help
+
+    $ git help branch
+
+    GitHub Docs
+    https://docs.github.com/en
+
+
+__Configuration
+
+    Character encoding
+
+        $ export LC_ALL=C.UTF-8     # for git log
+        $ export LESSCHARSET=UTF-8  # for git log
+
+
+    Installation
+
+        $ sudo apt-get install git-core bash-completion
+        $ source /usr/share/bash-completion/completions/git
+
+
+    Github
+
+        We recommend every repository include a 
+            * README 
+            * LICENSE
+            * .gitignore
+
+        $ ssh-keygen -f github.koowgnojeel -t ed25519 -C "github.com/koowgnojeel"
+        # copy pub contents and paste onto https://github.com/settings/keys
+
+
+    Help
+
+        $ git help config  # -- git VERB --help, git help VERB
+        $ man git-VERB
+
+
+    Protocol
+
+        Local protocol 사용
+
+            $ git clone /opt/git/project.git 
+
+        SSH는 익명으로 접근할 수 없다.
+        회사에서만 사용할 거라면 SSH가 가장 적합
+
+
+    저장소
+
+        bare
+
+            # 새로 만들기
+            $ ssh user@git.example.com
+            $ mkdir -p /opt/git/my_project.git
+            $ cd /opt/git/my_project.git
+            $ git init --bare --shared  # shared option을 추가하면 자동으로 그룹 쓰기 권한을 추가한다.
+
+            # 기존 저장소로 부터 clone
+            $ git clone --bare EXISTS_GIT_DIR NEW_DIR.git  # Bare 저장소, directory는 관례에 따라 .git 확장자로 끝난다.
+              (syntax - git clone https://abc MY_DIR)
+            $ scp -r NEW_DIR.git user@git.example.com:/opt/git
+            $ git clone user@git.example.com:/opt/git/NEW_DIR.git
+
+            참고 - https://docs.github.com/en/authentication/connecting-to-github-with-ssh
+
+        none-bare
+
+            1-1 (same as 1-2).
+                $ cd myproject
+                $ git init
+                $ git add .
+                $ git commit -m 'initial commit'
+
+                $ git remote add     origin git@gitserver:/opt/git/project.git                
+                $ git remote add     origin git@github.com:koowgnojeel/memo.git  # to add a new remote
+                $ git remote set-url origin git@github.com:koowgnojeel/memo.git  # to change the url of an existing remote repository
+
+                $ git remote -v
+                    origin    https://github.com/alpha/bravo (fetch)
+                    origin    https://github.com/alpha/bravo (push)
+                $ git branch --move --force main
+                $ git push -u origin main
+
+            1-2 (same as 1-1).
+                …or create a new repository on the command line
+
+                echo "# temp" >> README.md
+                git init
+                git add README.md
+                git commit -m "first commit"
+                git branch -M main
+                git remote add origin https://github.com/koowgnojeel/temp.git
+                git push -u origin main
+
+
+                …or push an existing repository from the command line
+
+                git remote add origin https://github.com/koowgnojeel/temp.git
+                git branch -M main
+                git push -u origin main
+
+            $ git clone git@gitserver:/opt/git/gitproject.git
+            $ cd project
+            $ vim README
+            $ git commit -am 'fix for the README file'
+            $ git push origin main
+
+
+    Git config
+
+        Config files
+
+            $ git config --system
+                .git/config
+
+            $ git config --global
+                ~/.gitconfig
+                ~/.config/git/config
+
+            $ vim /etc/gitconfig
+
+        Inquiry
+
+            $ git config --list
+            $ git config user.name
+
+            $ git config --global user.name "J"
+            $ git config --global user.email alpha@.com
+            $ git config --global core.editor emacs  # $EDITOR 환경변수에 저장된 내용을 사용
+            $ git config --global credential.helper [cache, store]
+            $ git config --global credential.helper 'cache --timeout=3600' # Caches for 1 hour
+
+
+        basic .gitconfig
+
+            # git config --global --list # for ~/.gitconfig
+            # git config --global --edit
+            # git config --system --list # for /etc/gitconfig
+            # [user]
+            #     email = 67332453+JinnampoJisanri90@users.noreply.github.com
+            #     name = JinnampoJisanri90
+            [user]
+                email = 3600481+koowgnojeel@users.noreply.github.com  # git config --global user.email "your_email@nameOf.com"  
+                name = koowgnojeel                                    # git config --global user.name  "아무개"  
+            [credential]
+                helper = cache
+            [core]
+                autocrlf = false    # git config --global core.autocrlf false
+                # autocrlf=true   x -> LF -> CRLF
+                # autocrlf=input  x -> LF -> LF
+                # autocrlf=false  x -> x  -> x
+                editor = vim        # git config --global core.editor "vim"
+                pager = less -iXFR  # git config --global --replace-all core.pager "less -iXFR"
+            [i18n]
+                logOutputEncoding = utf-8  # git config --global i18n.logOutputEncoding utf-8
+                commitEncoding = utf-8     # git config --global i18n.commitEncoding utf-8
+            [diff]
+                tool = vimdiff  # git config --global diff.tool vimdiff
+            [merge]
+                tool = vimdiff  # git config --global merge.tool vimdiff
+            [difftool]
+                prompt = false  # git config --global --add difftool.prompt false
+            [color]
+                ui = true       # git config --global color.ui true
+            [alias]
+                hist = log --graph --oneline --decorate
+                st = status
+
+
+        alias
+
+            $ git config --global alias.unstage 'reset HEAD --'
+            $ git config --global alias.visual '!gitk'  # !를 앞에 추가하면 외부 명령 실행
+
+
+        basic .gitignore
+
+            * https://github.com/github/gitignore 참고
+            * 정규 표현식을 간단하게 만든 glob pattern을 사용한다.
+            * directory는 슬래시(/)를 끝에 사용하는 것으로 표현한다.
+            * 느낌표(!)로 시작하는 패턴의 file은 무시하지 않는다.
+            * 애스터리스크 2개를 사용하여 directory 안의 directory까지 지정할 수 있다.
+
+
+            $ cat .gitignore
+                *.[oa]
+                *~
+
+                # 현재 directory에 있는 TODO file은 무시하고
+                # 하위 directory에 있는 file은 무시하지 않음.
+                /TODO
+
+                # build/ directory에 있는 모든 file은 무시
+                build/
+
+                # doc directory 아래의 모든 .pdf file을 무시
+                doc/**/*.pdf
+
+
+            Empty directory의 추가
+
+                $ cd empty-directory
+                $ vim .gitignore
+                    # Ignore every file in this folder
+                    *
+                    # Except this one
+                    !.gitignore
+
+                How to add an empty directory in git
+                https://graphite.dev/guides/add-empty-dir
+
+
+__Remote_origin
+
+    remote show origin
+
+        * refs는 리모트 저장소 레퍼런스 포인터
+        * remote branch의 이름은 [remote]/[branch]의 형식
+
+        $ git ls-remote [remote]    # 모든 remote refs 표시
+        $ git ls-remote --tags origin
+        $ git remote show [remote]  # 모든 remote branch와 정보를 표시
+
+
+    remote show origin
+
+        $ git remote show origin
+
+
+    remote add origin
+
+        * 저장소를 clone하면 자동으로 remote-name을 "origin" 이라는 이름으로 추가
+
+        $ git remote -v
+
+        $ git remote add [remote-name] [URL]
+        $ git remote add pb     https://abc
+        $ git remote add origin https://abc
+
+        $ git fetch [remote-name]
+        $ git fetch pb
+        $ git fetch origin
+
+
+    rename/remove origin
+
+        $ git remote rename pb origin
+        $ git remote rename pb paul
+        $ git remote rm paul
+        $ git remote
+
+        $ git clone -o booyah  # clone시 사용자 remote명을 정의
+
+
+__Branch
+
+    info
+
+        $ git branch
+        $ git branch -v           # 각 branch마다 마지막 commit message를 보여줌
+        $ git branch --merged     # merge된 branch를 표시. (삭제 가능하다.)
+        $ git branch --no-merged  # merge되지 않은 branch를 표시. (삭제 할 수 없다.)
+        $ git branch -a           # 원격(remote)과 로컬(local) 모두 보여줌
+        $ git branch -r           # -a 보다 간단히
+        $ git branch -vv          # -r 보다 간단히
+
+
+    Branch 이동/변경
+
+        $ git checkout localBranch
+
+
+    Branch 추적 (To set upstream)
+
+        | Example message
+        |
+        |     $ git push
+        |         fatal: The current branch develop has no upstream branch.
+        |         To push the current branch and set the remote as upstream, use
+        |             git push --set-upstream origin develop
+        |
+        |     $ git remote show origin
+
+
+        Create local branch w/ upstream branch
+
+            checkout하면(Remote or upstream branch를 local branch로)
+            자동으로 tracking branch가 만들어 진다.
+
+            $ git checkout --track origin/fix  # --track option을 사용하여 자동으로 local branch명을 생성할 수 있다.
+
+            $ git branch testing               # branch 만들기
+            $ git checkout -b iss53            # branch를 만들면서 이동
+            $ git checkout -b sf origin/fix    # local branch명을 sf로 하여 branch를 생성한다.
+            $ git checkout -b version2 v2.0.0  # tag가 가리키는 commit branch 만들기(checkout)
+
+            $ git branch -u origin/fix         # -u 또는 --set-upstream-to option으로 remote branch를 추적한다.
+
+            추적 branch(tracking)를 설정 했다면 @{u} 또는 @{upstream}을 다음과 같이
+            $ git merge origin/main 대신 $ git merge @{u}와 같이 사용할 수 있다.
+
+
+        Create local branch and makes upstream branch
+
+            Create a new branch locally and check it out.
+
+                $ git checkout -b <branch-name>
+
+            The remote branch is automatically created
+            when you push it to the remote server.
+
+                $ git push <remote-name> <local-branch-name> 
+                <remote-name> is typically (일반적으로) origin
+
+                Formally, the format is
+                $ git push <remote-name> <local-branch-name>:<remote-branch-name>
+                when you omit one, it assumes both branch names are the same. 
+
+            **CAUTION**, only :<remote-branch-name> (with the colon),
+            **the remote branch will be deleted!**
+
+            the --set-upstream option sets up an upstream branch
+
+                $ git push --set-upstream <remote-name> <local-branch-name> 
+
+
+    삭제
+
+        to delete remote git branch
+
+            # server에서 garbage collection이 되기 전 까지는 데이터를 살릴 수 있다.
+            $ git push origin --delete hotfix
+
+
+        to delete local git branch
+
+            $ git branch --delete hotfix
+
+        How to delete local and remote Git branches
+        https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/delete-local-remote-git-branch-command-github-push-origin-gitlab-bitbucket
+
+
+__Log_show
+
+    directory 및 file 검색시 -- path1/ path2/ 와 같이 사용
+
+    gitk
+        gitk [filename]
+
+    log
+
+        $ git log --all -- '**/my_file.png' | less
+        $ git log --all | less
+
+        $ git log --oneline --decorate --graph --all -10
+        $ git log --name-status
+        $ git log --name-only --oneline -10
+        $ git log --graph --oneline -10
+
+        $ git log --since=2.weeks
+        $ git log --after="2013-11-12 00:00" --before="2013-11-12 23:59"
+        $ git log --author='alpha' --grep=keyword --all-match  # author와 grep의 결과를 모두 만족하는 항목의 출력
+        $ git log -Sfunction_name  # 추가/삭제 내용 안의 텍스트를 검색
+
+
+        TODO - test
+            # merge되지 않은 commit을 확인하는 명령
+            $ git log 
+                --pretty="%h - %s"
+                --author=gitster
+                --since="2008-10-01" 
+                --before="2008-11-01"
+                --no-merges
+                -- t/
+
+            $ git log -p -2  # 각 commit과의 diff 결과
+            $ git log --stat # 통계
+            $ git log --pretty=online  # short, full, fuller 옵션을 추가로 사용할 수 있다.
+            $ git log --pretty=format:"%h - %an, $ar : %s"
+            $ git log --pretty=format:"%h %s" --graph
+
+            log options
+                --since, --after   : 명시한 날짜 이후의 commit만 검색
+                --until, --before  : 명시한 날짜 이전의 commit만 검색
+                --committer        : 저자는 원래 작업을 수행한 원작자이고 커피터는 마지막으로 이 작업을 적용한 사람.
+                -p                 : commit에 적용된 패치를 보여준다.
+                --stat             : commit에서 수정된 file의 통계 정보를 보여준다.
+                --abbrev-commit    : SHA-1의 checksum 일부를 보여준다.
+                --relative-date    : "2주 전"처럼 상대d저긴 시간을 보여준다.
+                --pretty           : oneline,short,full,fuller,format 형식으로 보여준다.
+
+            --pretty=format options
+                %H  commit 해시
+                %h  짧은 길이 commit 해시
+                %T  트리 해시
+                %t  짧은 길이 트리 해시
+                %P  부모 해시
+                %p  짧은 부모 해시
+                %an 저자 이름
+                %ae 저자 이메일
+                %ad 저자 시각(형식은 -date=옵션 참고)
+                %ar 저자 상대적 시각
+                %cn 커미터 이름
+                %ce 커미터 메일
+                %cd 커미터 시각
+                %cr 커미터 상대적 시각
+                %s  요약
+
+
+    changes (show, diff, ls-tree, grep)
+
+        * HEAD 포인터
+
+            이 포인터는 지금 작업하는 로컬 branch를 가리킨다.
+
+        * differences between double-dot ".." and triple-dot "..." in Git commit ranges
+
+            $ git log A..B               # Right join
+            $ git log main..experiment   # main에는 없지만 experiment에는 있는 commit
+            $ git log A...B              # exclusive
+
+            참고
+                $ git log refA refB ^refC       # A,B에는 있지만 C에는 없는 항목
+                $ git log refA refB --not refC  # 위와 동일
+
+            git checkout - What are the differences between double-dot ".." and triple-dot "..." in Git commit ranges? - Stack Overflow
+            https://stackoverflow.com/questions/462974/what-are-the-differences-between-double-dot-and-triple-dot-in-git-com
+
+        * changes / diff (Merge 전 변경사항 확인)
+
+            $ git show main@{yesterday}    # 어제 날짜의 main branch
+            $ git show HEAD^               # HEAD^는 HEAD의 부모, 바로 이전 commit
+            $ git show HEAD^^^
+            $ git show HEAD~3
+            $ git show HEAD@{5}            # HEAD가 5번 전에 가리켰던 것
+            $ git show d921970^2           # d921970의 두번째 부모
+
+            $ git log origin/main..HEAD
+
+            $ git log HEAD..origin/main
+            $ git log --name-status HEAD..origin/main
+            $ git diff HEAD..origin/main
+            $ git diff HEAD origin/main       # 첫 pull 이후 origin/main와 diff필요  
+            $ git log origin/main..           # 마지막 refs를 생략하면 HEAD로 간주
+
+
+            $ git fetch && git diff --name-only ..origin
+
+            $ git show HASH -- ./filename      # diff individual
+            $ git diff                         # unstaged 상태인 것들만 보여준다.
+            $ git diff --staged 또는 --cached  # commit본과 stage본을 비교
+
+            $ git difftool --tool-help
+            $ git difftool -- Dockerfile HEAD
+
+        * view
+
+            $ git show b1b22df407417:./Makefile
+            $ git show main:Makefile    # current version in main branch
+            $ git show exper^:Makefile  # previous version on the exper branch
+
+        * listing file
+
+            $ git ls-tree main
+            $ git ls-tree -r --name-only branch_name
+
+        * 문자열 검색
+
+            $ git grep -n abc      # line number
+            $ git grep --count abc
+            $ git grep -p abc *.c  # method search
+
+
+__Changes
+
+    상태
+
+        -----------------------------------------------------------------------------------
+        working directory | staging(index) area | .git directory(repository, snapshot) HEAD
+        -----------------------------------------------------------------------------------
+
+        * Modified란 데이터베이스에 commit하지 않은 것.
+        * Staging area는 index라 불리기도 한다. Commit할 대상에 대한 정보 저장
+        * Committed란 로컬 데이터베이스에 저장됐다는 것.
+
+
+    Git status
+
+        $ git status
+        $ git status -s
+        $ git status -v
+
+        * M  modified
+        * MM modified x 2 times
+        * ?? not tracked
+
+
+    Undo file
+
+        $ git checkout -- abc.md  # revert
+        $ git checkout HASH -- ./a/file1 ./b/file2  # revert to version(HASH)
+
+
+    A detached HEAD
+
+        Detached HEAD state informing you that you are no longer on a branch.
+
+        A detached HEAD occurs
+        when you are viewing a single commit in the history of a Git repository.
+
+        Discard Changes in a Detached HEAD
+
+            You do not need to save the changes you make to a detached HEAD.
+
+            Once you are done viewing a previous commit, 
+            you can go back to the HEAD of your repository.
+            First, we need to discard the changes we made
+
+                $ git reset --hard
+
+            Next, we can check out the HEAD of our main branch
+
+                $ git checkout main
+
+        Save Changes to a Detached HEAD
+
+            To save a change from a detached HEAD,
+            you need to create a new Git branch:
+
+                $ git branch dev
+
+        Git Detached HEAD Explanation | Career Karma
+        https://careerkarma.com/blog/git-head-detached-at/
+
+
+    Stash
+
+        $ git stash [push, pop, drop]
+
+        $ git stach -u  # --include-untracked
+        $ git stash show -u
+
+        $ git stash
+        $ git stash list
+        $ git stash apply stash@{2}
+        $ git stash apply  # 이름이 없으면 가장 최근 것
+
+        Staged 상태였던 file을 자동으로 다시 staged 상태로 만들어 주지 않는다.
+        $ git stash apply --index  # --index 옵션을 사용하여 staged상태까지 적용
+
+        $ git stash drop stash@{0}  # stash 제거
+
+        $ git stash --keep-index  # staging area에 들어있는 file은 stash하지 않는다.
+
+        $ git stash -u  # --include-untracked, -u 옵션은 추적 중이지 않는 file을 같이 저장한다.
+
+        $ git stash branch testchangegs  # stash할 당시의 commit을 branch로 만듬.
+
+
+    Undo add (staging된 file을 unstaging상태로 되돌리기)
+
+        $ git reset HEAD -- abc.md
+        $ git reset HASH -- filename
+        $ git unstage -- abc.md
+
+
+    Commit
+
+        $ git commit
+        $ git commit -v     # diff 결과도 추가
+        $ git commit -a -m  # -a 옵션을 사용하여 staging(add)을 생략할 수 있다.
+        $ git commit --reuse-message HEAD
+
+
+        Undo commit
+
+            appears as a single commit in the history
+
+                $ git commit -m 'test'
+                $ git add forgotten_file
+
+                $ git commit --amend -m "Changing a commit message" 
+                # -----------------------------------------------------------------
+                # If you have already pushed the commit to GitHub,
+                # you will have to force push a commit with an amended message.
+                # We strongly discourage force pushing,
+                # If you force push,
+                # people who have already cloned your repository 
+                # will have to manually fix their local history.
+                # -----------------------------------------------------------------
+
+            moving pointer (to reset multiple commits)
+
+                $ git commit -m "Something terribly misguided" # (0: Your Accident)
+                $ git reset HEAD~
+
+            * amend: Best for quick fixes to the last commit.
+            * reset: Ideal for undoing commits in your local history (can rewrite history).
+            * revert: Safely undo commits by creating new ones (does not rewrite history).
+
+
+        Remove (rewind) commit
+
+            Cancel a commit not pushed
+
+                $ git reset --soft HEAD~
+                $ git reset --soft "HEAD^"
+
+            Delete last commit after pushs
+
+                $ git reset --hard HEAD~1
+
+                $ git push -f <remote> <branch>
+                $ git push -f origin main
+
+            # Interactive 
+            $ git rebase -i HEAD~5  # if a mistake is made, git rebase --abort
+
+            git reset - How to cancel a local git commit? - Stack Overflow
+            https://stackoverflow.com/questions/4850717/how-to-cancel-a-local-git-commit
+
+            git - Remove specific commit - Stack Overflow
+            https://stackoverflow.com/questions/2938301/remove-specific-commit
+
+
+        Rebase
+
+            * remote branch에 commit을 깔끔하게 적용하고 싶을 때 사용.(선형 히스토리)
+
+            example_1)
+
+                # 1/2
+                $ git checkout experiment
+                $ git rebase main     # experiment commit까지 diff사항을 main 후 변경사항으로 저장
+
+                # 2/2
+                $ git checkout main
+                $ git merge experiment  # fast-forward함
+
+                | fast-forward
+                | 
+                |     포인터는 merge 과정 없이 최신 commit으로 이동한다.
+                |     이런 merge 방식을 fast forward라고 부른다.
+                | 
+                |     참고 : $ git mergetool
+
+
+            example_2)
+
+                # commit message를 여러 개 수정하기
+                $ git rebase -i HEAD~3
+                $ git commit --amend
+                $ git rebase --continue
+
+
+    Permanently remove a file from Git history
+
+        # Assuming it was a .env file,
+        $ git filter-branch --index-filter "git rm -rf --cached --ignore-unmatch .env" HEAD
+        $ git push --force
+
+        # If we only wanted to remove the file
+        # and did not care about deleting it from the git history,
+        # we would have used the command:
+        $ git rm -r --cached .env
+
+        #### How to permanently remove a file from Git history - Wisdom Geek
+        https://www.wisdomgeek.com/development/how-to-permanently-remove-a-file-from-git-history/
+
+        Test
+            # --all option을 추가하면 모든 branch 대상으로 적용
+            $ git filter-branch --tree-filter 'rm -f passwords.txt' HEAD 
+
+
+    rename / remove / move file
+
+        $ git rm log/\*.log      # filesystem과 repository의 file 삭제
+        $ git rm -f abc.txt      # staging되어 있다면 -f 옵션과 함께 강제로 삭제
+        $ git rm --cached README # filesystem의 file은 두고 repository에서 삭제
+
+        $ git mv OLD_NAME NEW_NAME
+
+
+    추적하고 있지 않은 file 삭제
+
+        $ git clean -n     # no act
+        $ git clean        # git clean --all 명령을 사용하면 삭제 전 file을 stash하므로 좀 더 안전하다.
+        $ git clean -f -d  # 추적 중이지 않은 모든 정보를 삭제
+
+
+    Tag
+
+        * lightweight과 annotated tag이 있다.
+        * 자동으로 push하지 않는다.(clone/pull으로는 받을 수 있음)
+
+        $ git tag v1.4-lw          # lightweight tagging
+        $ git tag -a v1.4 -m 'my version 1.4'
+        $ git tag -a v1.2 9fceb02  # checksum에 annotate tagging
+
+        $ git tag
+        $ git tag -l
+        $ git tag -l -n9
+        $ git tag -l -n9 v3.*
+        $ git tag -l 'v1.8.5*'
+        $ git ls-remote --tags origin
+        $ git show v1.4            # tag 정보와 commit 정보를 확인
+
+        $ git push origin v1.4
+        $ git push origin --tags  # remote server에 없는 tag를 모두 전송
+
+        $ git clone --depth 1 --branch <tag_name> <repo_url>
+        # --depth 1 is optional
+        # but if you only need the state at that one revision,
+        # you probably want to skip downloading all the history up to that revision.
+
+        Remove
+
+            from local
+                $ git tag -d v0.0.1.4
+
+            from remote
+                $ git push --delete origin v0.0.1.2
+
+    Push
+
+        $ git push [remote-name] [branch-name]
+        $ git push origin fix:fix     # local fix branch를 remote fix branch로 push한다.
+        $ git push origin fix         # 위와 동일
+
+
+    Pull
+
+        $ git pull
+        $ git pull remotename branchname
+
+
+    Merge(1/2)
+
+        $ git checkout main
+        $ git merge origin/fix
+
+
+    Merge(2/2)
+
+        $ git fetch  # 현재 위치(branch)로 가져오되 머지는 안함  
+        $ git merge  # 현재 위치(branch)에서 다른곳에서 수정된 것과 병합하기  
+
+
+    cherry-pick
+
+        If you're not prepared to do a pull and merge in all the remote commits,
+        you can use git cherry-pick to accept only the specific remote commits you want.
+
+        I have heard of people who run git fetch in a cron job because it's so safe. 
+        (I wouldn't normally recommend doing that, though.)
+
+
